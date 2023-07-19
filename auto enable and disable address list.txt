@@ -1,0 +1,28 @@
+:local currentDateTime [/system clock get date]
+:local currentDate [:pick $currentDateTime 4 6]
+:local currentTime [/system clock get time]
+:local requiredDate "09"
+:local requiredTime "18:42:00"
+:local disableDate "09"
+:local disableTime "18:43:00"
+:local comment "Vincent"
+
+:local listID [/ip firewall address-list find comment="$comment"]
+
+:if (($currentDate = $requiredDate) && ($currentTime = $requiredTime)) do={
+    :foreach i in=$listID do={
+        :local listName [/ip firewall address-list get $i comment]
+        :if ($listName = $comment) do={
+            /ip firewall address-list set $i disabled=no
+        }
+    }
+} else={
+    :if (($currentDate = $disableDate) && ($currentTime = $disableTime)) do={
+        :foreach i in=$listID do={
+            :local listName [/ip firewall address-list get $i comment]
+            :if ($listName = $comment) do={
+                /ip firewall address-list set $i disabled=yes
+            }
+        }
+    }
+}

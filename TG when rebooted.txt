@@ -1,0 +1,7 @@
+:local token "6213011088:AAG_RajWBhSuWJzPW7abjFvMKzknahvvRxc";
+:local chatId "-1001598756281";
+:local message "MikroTik router has rebooted without proper shutdown."
+
+/tool fetch url="https://api.telegram.org/bot$token/sendMessage" \
+     http-method=post http-data=("chat_id=" . $chatId . "&text=" . $message) \
+     keep-result=no

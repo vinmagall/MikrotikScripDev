@@ -1,0 +1,31 @@
+:local activationDate [/system clock get date]
+:local activationTime [/system clock get time]
+
+:local hour [:pick $activationTime 0 2]
+:local minute [:pick $activationTime 3 5]
+:local second [:pick $activationTime 6 8]
+
+:local convertedHour ($hour + 0)
+:local suffix "AM"
+
+:if ($convertedHour >= 12) do={
+  :set convertedHour ($convertedHour - 12)
+  :set suffix "PM"
+}
+
+:if ($convertedHour = 0) do={
+  :set convertedHour 12
+}
+
+:local convertedTime ([:tostr $convertedHour] . ":" . $minute . ":" . $second . " " . $suffix)
+
+:foreach secret in=[/ppp secret find] do={
+  :local nameVal [/ppp secret get $secret name]
+  :local passwordVal [/ppp secret get $secret password]
+  :local profileVal [/ppp secret get $secret profile]
+  :local commentVal [/ppp secret get $secret comment]
+
+  :if ($nameVal != "" && $passwordVal != "" && $commentVal = "") do={
+    /ppp secret set $secret comment=("Activation: $activationDate $convertedTime, Profile: $profileVal")
+  }
+}
